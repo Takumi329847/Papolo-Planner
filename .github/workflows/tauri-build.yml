@@ -1,0 +1,61 @@
+name: Build & Release Windows App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-tauri:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Sync version in tauri.conf.json
+        shell: bash
+        run: |
+          node -e '
+            const fs = require("fs");
+            const configPath = "src-tauri/tauri.conf.json";
+            const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+            
+            let tag = process.env.TAG_NAME;
+            if (!tag || !tag.startsWith("v")) {
+              tag = `v1.0.${process.env.RUN_NUMBER}`;
+            }
+            
+            const version = tag.replace(/^v/, "");
+            config.version = version;
+            
+            fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
+            console.log(`Successfully set tauri.conf.json version to: ${version} (Tag: ${tag})`);
+          '
+        env:
+          TAG_NAME: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          RUN_NUMBER: ${{ github.run_number }}
+
+      - name: Build Tauri App
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || format('v1.0.{0}', github.run_number) }}
+          # 修正箇所: 内側のダブルクォーテーション "tag" と "v1.0.{0}" をシングルクォーテーションに変更
+          releaseName: 'Papolo ${{ github.ref_type == ''tag'' && github.ref_name || format(''v1.0.{0}'', github.run_number) }}'
+          releaseBody: 'Papolo Desktop Windows Release'
+          releaseDraft: false
+          prerelease: false

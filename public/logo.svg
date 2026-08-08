@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Teal 'p' shape with cutout hole -->
+  <path d="M 156 95 L 233 95 L 233 420 L 156 420 L 156 248 C 113 248 78 213 78 171 C 78 129 113 95 156 95 Z M 155 135 A 36 36 0 1 0 155 207 A 36 36 0 1 0 155 135 Z" fill="#42b8c5" fill-rule="evenodd"/>
+
+  <!-- Yellow circle -->
+  <circle cx="286" cy="280" r="130" fill="#fde887" />
+
+  <!-- Terracotta Red circle -->
+  <circle cx="355" cy="315" r="103" fill="#ad5959" />
+</svg>

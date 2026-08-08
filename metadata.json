@@ -1,0 +1,6 @@
+{
+  "name": "Papolo",
+  "description": "An Excel-like vertical calendar for Study and Workout tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
